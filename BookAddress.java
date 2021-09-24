@@ -44,6 +44,31 @@ class Contactdetails {
 
 	}
 
+	public void delete(String name) 
+	{
+		for (int i = 0; i < 10; i++) {
+			boolean result = (Arrays.asList(Firstname).contains(name));
+			if (result == true) {
+				Firstname[i] = null;
+				Lastname[i] = null;
+				Address[i] = null;
+				phoneNumber[i] = null;
+
+				LOG.info("" + i);
+
+			}
+		} // boolean contains = Arrays.stream(Firstname).anyMatch("name"::equals);
+			// for(int i=0;i<10;i++)
+			// {
+
+		// }
+		LOG.info("Firstname" + Arrays.toString(Firstname));
+		LOG.info("Firstname" + Arrays.toString(Lastname));
+		LOG.info("Firstname" + Arrays.toString(Address));
+		LOG.info("Firstname" + Arrays.toString(phoneNumber));
+
+	}
+
 }
 
 public class BookAddress extends Contactdetails {
@@ -69,8 +94,7 @@ public class BookAddress extends Contactdetails {
 			case 1:
 				LOG.info("enter the number of contact you want to add:");
 				int length = value.nextInt();
-				for (int i = 0; i < length; i++)
-				{
+				for (int i = 0; i < length; i++) {
 					LOG.info("enter the phonenumber");
 					int phonenumber = value.nextInt();
 
@@ -100,6 +124,16 @@ public class BookAddress extends Contactdetails {
 
 				contact.replace(name, newname);
 
+				break;
+				
+			case 3:
+				Scanner cvb=new Scanner(System.in);
+				LOG.info("enter the name you want to rename");
+				 name=cvb.nextLine();
+				
+				
+				contact.delete(name);
+				
 				break;
 
 			default:
