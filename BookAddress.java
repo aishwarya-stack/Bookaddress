@@ -1,5 +1,7 @@
 package www.bridgelabz.demobook;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,6 +63,30 @@ public class BookAddress {
 			String email = sc.nextLine();
 			contact.add(new BookAddress(first_name, last_name, address, city, state, zip, phone_number, email));
 		}
+	}
+
+	// writes the data from the file
+	public void writeFile(String file) {
+		try {
+			FileWriter writer = new FileWriter(file + ".txt", true);
+			for (int j = 0; j < contact.size(); j++) {
+				BookAddress object = contact.get(j);
+				writer.write("\nfirstname:" + object.first_name + "\nlastname:" + object.last_name + "\naddress:"
+						+ object.address + "\ncity:" + object.city + "\nstate:" + object.state + "\nzip:" + object.zip
+						+ "\nphone number:" + object.phone_number + "\nemail:" + object.email + "\n");
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// reads the data from the file
+	public void readFile(String file) throws IOException {
+		FileReader fr = new FileReader(file + ".txt");
+		int i;
+		while ((i = fr.read()) != -1)
+			System.out.print((char) i);
 	}
 
 	// method to display the addressbook
