@@ -4,146 +4,303 @@ import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class Contactdetails {
 
-	private static final Logger LOG = LogManager.getLogger("BookAddress.class");
-	Integer[] phoneNumber = new Integer[10];
-	String[] Address = new String[10];
-	String[] Firstname = new String[10];
-	String[] Lastname = new String[10];
+public  class BookAddress {
+	 private static final Scanner sc = new Scanner(System.in);
+	    private final Map<String, Addresses> dictionary = new HashMap<>();
 
-	public void getValue(int phonenumber, String address, String firstname, String lastname, int length, int time) {
-		int count = 0;
+	    public static void main(String[] args) {
+	        BookAddress addressBook = new BookAddress();
+	        while (true) {
 
-		for (int i = time; i < length; i++) {
-			phoneNumber[i] = phonenumber;
-			Address[i] = address;
-			Firstname[i] = firstname;
-			Lastname[i] = lastname;
-			// count=count+1;
-		}
-		LOG.info("phoneNumber" + Arrays.toString(phoneNumber));
-		LOG.info("Address" + Arrays.toString(Address));
-		LOG.info("Firstname" + Arrays.toString(Firstname));
-		LOG.info("Lastname" + Arrays.toString(Lastname));
+	            System.out.println("1 Print\n2 Create \n3 Select Existing\n4 Delete\n5 Exit");
+	            int choice = sc.nextInt();
+	            if (choice == 5)
+	                break;
 
+	            switch (choice) {
+	                case 1:
+	                    addressBook.printAddressBooksNames();
+	                    break;
+	                case 2:
+	                    System.out.println("Enter new Bookname");
+	                    sc.nextLine();
+	                    String bookName = sc.nextLine();
+	                    addressBook.createAddressBook(bookName);
+	                    addressBook.printAddressBooksNames();
+	                    break;
+	                case 3:
+	                    addressBook.printAddressBooksNames();
+	                    System.out.println("Enter Bookname to select");
+	                    sc.nextLine();
+	                    bookName = sc.next();
+	                    Addresses ad1 = addressBook.getAddressBook(bookName);
+	                    ad1.driver();
+	                    break;
+	                case 4:
+	                    System.out.println("Enter Bookname to delete");
+	                    sc.nextLine();
+	                    bookName = sc.next();
+	                    addressBook.deleteAddressBook(bookName);
+	                    addressBook.printAddressBooksNames();
+	                    break;
+
+	            }
+	        }
+	    }
+
+
+	    public boolean createAddressBook(String name) {
+	        if (dictionary.containsKey(name)) {
+	            return true;
+	        }
+	        dictionary.put(name, new Addresses());
+	        return true;
+	    }
+
+	    public void printAddressBooksNames() {
+	        dictionary.keySet().forEach(System.out::println);
+	    }
+
+	    public Addresses getAddressBook(String name) {
+	        return dictionary.get(name);
+	    }
+
+	    public boolean deleteAddressBook(String name) {
+	        if (dictionary.containsKey(name)) {
+	            dictionary.remove(name);
+	            return true;
+	        }
+	        return false;
+	    }
+
+	    class Addresses {
+
+
+	        private final Scanner sc = new Scanner(System.in);
+	        private List<Contact> contacts = null;
+
+	        public Addresses() {
+	            this.contacts = new ArrayList<>();
+	        }
+
+	        /**
+	         * This method is used to read contacts
+	         *
+	         * @return returnscontact
+	         */
+	        public Contact readContactDetails() {
+	            Contact contact = new Contact();
+	            System.out.println("Enter FN");
+	            contact.setFirstName(sc.nextLine());
+	            System.out.println("Enter LN");
+	            contact.setLastName(sc.nextLine());
+	            System.out.println("Enter Add");
+	            contact.setAddress(sc.nextLine());
+	            System.out.println("Enter City");
+	            contact.setCity(sc.nextLine());
+	            System.out.println("Enter STate");
+	            contact.setState(sc.nextLine());
+	            System.out.println("Enter zp");
+	            contact.setZip(sc.nextLine());
+	            System.out.println("Enter PN");
+	            contact.setPhoneNumber(sc.nextLine());
+	            System.out.println("Enter EM");
+	            contact.setEmailId(sc.nextLine());
+	            return contact;
+	        }
+
+	        /**
+	         * This method prints all contacts
+	         */
+
+	        public void printContacts() {
+	            for (Contact contact : this.contacts) {
+	                System.out.println(contact);
+	            }
+	            if (this.contacts.size() == 0) {
+	                System.out.println("No contacts");
+	            }
+	        }
+
+	        /**
+	         * this method is used to add contacts
+	         */
+
+	        public void addContact() {
+	            Contact contact = this.readContactDetails();
+	            this.contacts.add(contact);
+	        }
+
+	        /**
+	         * This method is used to edit contacts
+	         */
+
+	        public void editContact() {
+	            System.out.println("Enter FN");
+	            String firstName = sc.nextLine();
+	            System.out.println("Enter LN");
+	            String lastName = sc.nextLine();
+	            int index = search(firstName, lastName);
+	            if (index == -1) {
+	                System.out.println("Contact Not Found");
+	            } else {
+	                System.out.println("Enter new Values");
+	                Contact contact = this.readContactDetails();
+	                this.contacts.set(index, contact);
+	            }
+	        }
+
+	        /**
+	         * This method is to delete contacts
+	         */
+	        public void deleteContact() {
+	            System.out.println("Enter FN");
+	            String firstName = sc.nextLine();
+	            System.out.println("Enter LN");
+	            String lastName = sc.nextLine();
+	            int index = search(firstName, lastName);
+	            if (index == -1) {
+	                System.out.println("Contact Not Found");
+	            } else {
+	                this.contacts.remove(index);
+	                System.out.println("Contact Deleted");
+	            }
+	        }
+
+	        /**
+	         * Method to search for a contact in the contact list
+	         *
+	         * @param firstName first name of the contact
+	         * @param lastName  last name of the contact
+	         * @return index of the contact to be searched, -1 if not found
+	         */
+
+	        public int search(String firstName, String lastName) {
+	            int i;
+	            int len = this.contacts.size();
+	            for (i = 0; i < len; ++i) {
+	                if (this.contacts.get(i).getFirstName().equals(firstName) &&
+	                        this.contacts.get(i).getLastName().equals(lastName)) {
+	                    break;
+	                }
+	            }
+	            if (i >= len) {
+	                return -1;
+	            } else {
+	                return i;
+	            }
+	        }
+
+
+	        // Call this to do this
+	        public void driver() {
+
+	            while (true) {
+	                System.out.println("Welcome to Address Book");
+	                System.out.println("1 Add\n2 Edit \n3 Delete\n4 Print\n5 Exit");
+	                System.out.println("Enter option");
+	                int option = sc.nextInt();
+	                sc.nextLine();
+
+	                if (option == 5)
+	                    break;
+
+	                switch (option) {
+	                    case 1:
+	                        this.addContact();
+	                        break;
+	                    case 2:
+	                        this.editContact();
+	                        break;
+	                    case 3:
+	                        this.deleteContact();
+	                        break;
+	                    case 4:
+	                        this.printContacts();
+	                        break;
+	                    default:
+	                        System.out.println("Invalid Choice");
+	                }
+	            }
+	        }
+	    }
+
+	    /**
+	     * This is model class
+	     */
+	    class Contact {
+	        private String firstName;
+	        private String lastName;
+	        private String address;
+	        private String city;
+	        private String state;
+	        private String zip;
+	        private String phoneNumber;
+	        private String emailId;
+
+	        public Contact() {
+	            super();
+	        }
+
+	        public Contact(String firstName, String lastName, String address, String city, String state, String zip,
+	                       String phoneNumber, String emailId) {
+	            super();
+	            this.firstName = firstName;
+	            this.lastName = lastName;
+	            this.address = address;
+	            this.city = city;
+	            this.state = state;
+	            this.zip = zip;
+	            this.phoneNumber = phoneNumber;
+	            this.emailId = emailId;
+	        }
+
+	        public String getFirstName() {
+	            return firstName;
+	        }
+
+	        public void setFirstName(String firstName) {
+	            this.firstName = firstName;
+	        }
+
+	        public String getLastName() {
+	            return lastName;
+	        }
+
+	        public void setLastName(String lastName) {
+	            this.lastName = lastName;
+	        }
+
+	        public void setAddress(String address) {
+	            this.address = address;
+	        }
+
+	        public void setCity(String city) {
+	            this.city = city;
+	        }
+
+	        public void setState(String state) {
+	            this.state = state;
+	        }
+
+	        public void setZip(String zip) {
+	            this.zip = zip;
+	        }
+
+	        public void setPhoneNumber(String phoneNumber) {
+	            this.phoneNumber = phoneNumber;
+	        }
+
+	        public void setEmailId(String emailId) {
+	            this.emailId = emailId;
+	        }
+
+	        @Override
+	        public String toString() {
+	            return "Address [firstName=" + firstName + ", lastName=" + lastName + ", address=" + address + ", city=" + city
+	                    + ", state=" + state + ", zip=" + zip + ", phoneNumber=" + phoneNumber + ", emailId=" + emailId + "]";
+	        }
+
+	    }
 	}
-
-	public void replace(String name, String newname) {
-
-		boolean result = (Arrays.asList(Firstname).contains(name));
-		if (result == true) {
-			Firstname[0] = newname;
-		}
-		// boolean contains = Arrays.stream(Firstname).anyMatch("name"::equals);
-		// for(int i=0;i<10;i++)
-		// {
-
-		// }
-		LOG.info("Firstname" + Arrays.toString(Firstname));
-
-	}
-
-	public void delete(String name) 
-	{
-		for (int i = 0; i < 10; i++) {
-			boolean result = (Arrays.asList(Firstname).contains(name));
-			if (result == true) {
-				Firstname[i] = null;
-				Lastname[i] = null;
-				Address[i] = null;
-				phoneNumber[i] = null;
-
-				LOG.info("" + i);
-
-			}
-		} // boolean contains = Arrays.stream(Firstname).anyMatch("name"::equals);
-			// for(int i=0;i<10;i++)
-			// {
-
-		// }
-		LOG.info("Firstname" + Arrays.toString(Firstname));
-		LOG.info("Firstname" + Arrays.toString(Lastname));
-		LOG.info("Firstname" + Arrays.toString(Address));
-		LOG.info("Firstname" + Arrays.toString(phoneNumber));
-
-	}
-
-}
-
-public class BookAddress extends Contactdetails {
-	private static final Logger LOG = LogManager.getLogger("BookAddress.class");
-	private static final String NULL = null;
-
-	public static void main(String[] args) {
-		LOG.info("Welcome to address Book Program");
-
-		Scanner value = new Scanner(System.in);
-
-		BookAddress contact = new BookAddress();
-
-		// LOG.info("1.ADD 2.REPLACE 3.DELETE");
-		// 1LOG.info("enter Your Choice");
-		int Check = value.nextInt();
-		int choice;
-		do {
-			LOG.info("1.ADD 2.REPLACE 3.DELETE");
-			LOG.info("enter Your Choice");
-			Check = value.nextInt();
-			switch (Check) {
-			case 1:
-				LOG.info("enter the number of contact you want to add:");
-				int length = value.nextInt();
-				for (int i = 0; i < length; i++) {
-					LOG.info("enter the phonenumber");
-					int phonenumber = value.nextInt();
-
-					LOG.info("enter the address");
-					String address = value.nextLine();
-
-					LOG.info("enter the firstname");
-					String firstname = value.nextLine();
-
-					LOG.info("enter the lastname");
-					String lastname = value.nextLine();
-
-					int time = i;
-					contact.getValue(phonenumber, address, firstname, lastname, length, time);
-				}
-				// contact.getValue(phonenumber,address,firstname,lastname);
-				break;
-
-			case 2:
-				Scanner sc = new Scanner(System.in);
-				LOG.info("enter the name you want to rename");
-				String name = sc.nextLine();
-
-				Scanner next = new Scanner(System.in);
-				LOG.info("enter the new name");
-				String newname = next.nextLine();
-
-				contact.replace(name, newname);
-
-				break;
-				
-			case 3:
-				Scanner cvb=new Scanner(System.in);
-				LOG.info("enter the name you want to rename");
-				 name=cvb.nextLine();
-				
-				
-				contact.delete(name);
-				
-				break;
-
-			default:
-				// empHr = 0;
-				break;
-
-			}
-			LOG.info("do you want to continue? 1.yes 2.No");
-			choice = value.nextInt();
-		} while (choice == 1);
-
-	}
-}
